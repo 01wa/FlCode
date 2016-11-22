@@ -72,7 +72,7 @@ char * GetJzChar(JzStatus & st,unsigned int iValue, int & k)
 	return p;
 }
 /*
-编码：
+编码：	输入消息，转换为字符串序列和位数序列
 */
 string EncodeJz(JzStatus & st,const char* msg,size_t len,std::vector<unsigned char>&iSer)
 {
