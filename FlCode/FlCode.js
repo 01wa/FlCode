@@ -138,6 +138,7 @@ function Encode16(str)
     }
     return rstr;
 }
+
 function Encode()
 {
     var st = new Object();
@@ -161,7 +162,7 @@ function Encode()
         m_str+="%"+s_str.substr(i * 2, 2);
     }
     var m = decodeURI(m_str);
-    var iSer=new Array();
+    var iSer = new Array();
     var zxj = EncodeJz(st, co, iSer);
     document.getElementById("dd").value = zxj;
     var pp = DecodeJz(st, zxj, zxj.length, iSer);
@@ -170,5 +171,34 @@ function Encode()
         msg += "%" + pp.substr(i * 2, 2);
     }
     document.getElementById("dl").value = iSer.toString();
+    document.getElementById("d1").value = msg;
     document.getElementById("de").value = unescape(decodeURI(msg));
+}
+function Decode()
+{
+    var st = new Object();
+    var mb = document.getElementById("mb").value;
+    if (mb != undefined && mb != "") {
+        st.letters = mb;
+    }
+    InitJz(st);
+    var zxj = document.getElementById("dd").value;
+    var iSer = document.getElementById("dl").value.split(",");
+    for (x in iSer)
+    {
+        iSer[x] =parseInt( iSer[x]);
+    }
+    var pp = DecodeJz(st, zxj, zxj.length, iSer);
+    var msg = "";
+    for (var i = 0; i < pp.length / 2; i++) {
+        msg += "%" + pp.substr(i * 2, 2);
+    }
+    document.getElementById("d1").value = msg;
+    try{
+        document.getElementById("de").value = unescape(decodeURI(msg));
+    }catch(e)
+    {
+        document.getElementById("de").value = e.message;
+    }
+    
 }
