@@ -4,7 +4,7 @@ int main()
 {
 	JzStatus  st;
 	InitJz( st);
-	string zlx = "分离码是一种信息编解码技术，主要利用数学的不同进制转换来形成，结合码表和数学的进制转换，提出码位分离的编解码方法。 ";
+	string zlx = "Test FLcode";
 	const char * ppp = zlx.c_str();
 	std::vector<unsigned char>iSer;
 	string zxj = EncodeJz(st, zlx.c_str(), zlx.size(), iSer);

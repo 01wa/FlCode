@@ -28,6 +28,25 @@ union i_c
 	unsigned int iVal;
 	unsigned char cVal[sizeof(unsigned int)];
 };
+#define uint32	 unsigned int
+#define BigtoLittle32(A) ((( (uint32)(A) & 0xff000000) >> 24) | \
+	(((uint32)(A)& 0x00ff0000) >> 8) | \
+	(((uint32)(A)& 0x0000ff00) << 8) | \
+	(((uint32)(A)& 0x000000ff) << 24))
+bool IsBigEndian()
+{
+	union NUM
+	{
+		int a;
+		char b;
+	}num;
+	num.a = 0x1234;
+	if (num.b == 0x12)
+	{
+		return true;
+	}
+	return false;
+}
 //³õÊ¼»¯
 void InitJz(JzStatus & st)
 {
@@ -81,7 +100,7 @@ string EncodeJz(JzStatus & st,const char* msg,size_t len,std::vector<unsigned ch
 	string outstr;
 	for (int k = 0; k < i; k++)
 	{
-		int p;
+		int p=0;
 		memcpy(&p, (void*)&msg[k*sizeof(int)], sizeof(int));
 		int m = 0;
 		char * tmp = GetJzChar(st, p, m);
@@ -91,7 +110,7 @@ string EncodeJz(JzStatus & st,const char* msg,size_t len,std::vector<unsigned ch
 	}
 	if (j>0)
 	{
-		int p;
+		int p=0;
 		memcpy(&p, (void*)&msg[i*sizeof(int)],j);
 		int m = 0;
 		char * tmp = GetJzChar(st, p, m);
