@@ -4,7 +4,7 @@ int main()
 {
 	JzStatus  st;
 	InitJz( st);
-	string zlx = "Test FLcode";
+	string zlx = "@@@@";
 	const char * ppp = zlx.c_str();
 	std::vector<unsigned char>iSer;
 	string zxj = EncodeJz(st, zlx.c_str(), zlx.size(), iSer);

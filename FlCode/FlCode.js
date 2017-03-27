@@ -44,7 +44,7 @@ function GetJzChar(st,iValue)
         p += st.letters[parseInt(iValue % st.jz)];
         
         iValue = i;
-        if (i > st.jz) {
+        if (i >= st.jz) {
             k++;
         }else 
         {
