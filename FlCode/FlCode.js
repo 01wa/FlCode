@@ -111,6 +111,10 @@ function DecodeJz( st, msg, len, iSer)
     {
         var m = GetJzInt(st, msg, offset, iSer[x]);
         var p = m.toString(16);
+        if (p.length % 2 != 0)
+        {
+            p = "0" + p;
+        }
         m = "";
         for (var i=0;i<p.length/2;i++)
         {
