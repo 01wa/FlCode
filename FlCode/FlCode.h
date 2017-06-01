@@ -16,6 +16,23 @@
 #include "map"
 #include "vector"
 using namespace std;
+
+//注意：当字符串为空时，也会返回一个空字符串
+void split(const std::string& s, std::string& delim, std::vector< std::string >* ret)
+{
+	size_t last = 0;
+	size_t index = s.find_first_of(delim, last);
+	while (index != std::string::npos)
+	{
+		ret->push_back(s.substr(last, index - last));
+		last = index + 1;
+		index = s.find_first_of(delim, last);
+	}
+	if (index - last>0)
+	{
+		ret->push_back(s.substr(last, index - last));
+	}
+}
 //进制转换结构描述：jz表示多少进制，letters表示进制的字符串	，iCodeTable表示字符代表的数
 typedef struct JzStatus
 {
@@ -139,4 +156,56 @@ vector<unsigned char> DecodeJz(JzStatus & st, const string &msg, const size_t& l
 		offset += x;
 	}
 	return std::move( p1);
+}
+/*
+编码：空格分割
+*/
+string EncodeJzByspace(JzStatus & st, const char* msg, size_t len)
+{
+	int i = len / sizeof(unsigned int);
+	int j = len % sizeof(unsigned int);
+	string outstr;
+	for (int k = 0; k < i; k++)
+	{
+		int p = 0;
+		memcpy(&p, (void*)&msg[k*sizeof(int)], sizeof(int));
+		int m = 0;
+		char * tmp = GetJzChar(st, p, m);
+		outstr.append(tmp);
+		outstr.append(" ");
+		delete[] tmp;
+	}
+	if (j>0)
+	{
+		int p = 0;
+		memcpy(&p, (void*)&msg[i*sizeof(int)], j);
+		int m = 0;
+		char * tmp = GetJzChar(st, p, m);
+		outstr.append(tmp);
+		outstr.append(" ");
+		delete[] tmp;
+	}
+	return std::move(outstr);
+}
+/*
+解码：空格分割
+*/
+vector<unsigned char> DecodeJzByspace(JzStatus & st, const string &msg, const size_t& len)
+{
+	vector<unsigned char> p1;
+	size_t offset = 0;
+	const char * tp = msg.c_str();
+	int po = 0;
+	i_c ic;
+	std::vector< std::string > strvec;
+	string 	delim = " ";
+	split(msg, delim, &strvec);
+	for (auto &x : strvec)
+	{
+		unsigned int m = GetJzInt(st, x.c_str(), x.length());
+		ic.iVal = m;
+		for (int h = 0; h < sizeof(int); h++)
+			p1.emplace_back(ic.cVal[h]);
+	}
+	return std::move(p1);
 }

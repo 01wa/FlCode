@@ -100,6 +100,33 @@ function EncodeJz(st,msg,iSer)
     return outstr;
 }
 /*
+编码：空格分割
+*/
+function EncodeJzByspace(st, msg) {
+    var len = msg.length;
+    var i = Math.floor(len / 4);
+    var j = len % 4;
+    var outstr = "";
+    for (var k = 0; k < i; k++) {
+        var p = chartoint(msg, k * 4, 4);
+        var m = 0;
+        if (p != NaN) {
+            var tmp = GetJzChar(st, p);
+            outstr += tmp.str;
+            outstr += " ";
+        }
+    }
+    if (j > 0) {
+        var p = chartoint(msg, k * 4, j);
+        var m = 0;
+        var tmp = GetJzChar(st, p);
+        outstr += tmp.str;
+        outstr += " ";
+    }
+    return outstr;
+}
+
+/*
 解码
 */
 function DecodeJz( st, msg, len, iSer)
@@ -125,6 +152,30 @@ function DecodeJz( st, msg, len, iSer)
 		offset += iSer[x];
     }
     return  p1;
+}
+/*
+解码：空格分割
+*/
+function DecodeJzByspace(st, msg, len) {
+    var p1 = "";
+    var offset = 0;
+    var sarray = msg.split(" ");
+    for (x in sarray) {
+        if (sarray[x].length == 0)
+            break;
+        var m = GetJzInt(st, sarray[x], 0, sarray[x].length);
+        var p = m.toString(16);
+        if (p.length % 2 != 0) {
+            p = "0" + p;
+        }
+        m = "";
+        for (var i = 0; i < p.length / 2; i++) {
+            var tmp = p.substr(i * 2, 2);
+            m = tmp + m;
+        }
+        p1 += m.toString(16);
+    }
+    return p1;
 }
 function Encode16(str)
 {
@@ -205,4 +256,59 @@ function Decode()
         document.getElementById("de").value = e.message;
     }
     
+}
+
+function EncodeByspace() {
+    var st = new Object();
+    var mb = document.getElementById("mb").value;
+    if (mb != undefined && mb != "") {
+        st.letters = mb;
+    }
+    InitJz(st);
+    //var zlx = '分离码是一种信息编解码技术，主要利用数学的不同进制转换来形成，结合码表和数学的进制转换，提出码位分离的编解码方法。';
+
+    var zlx = document.getElementById("ss").value;
+    var code = encodeURI(zlx);
+    var s_str = Encode16(code);
+
+    var co = new Array();
+    var m_str = "";
+    for (var i = 0; i < s_str.length / 2; i++) {
+        co.push(s_str.substr(i * 2, 2));
+        m_str += "%" + s_str.substr(i * 2, 2);
+    }
+    var m = decodeURI(m_str);
+    var iSer = new Array();
+    var zxj = EncodeJzByspace(st, co);
+    document.getElementById("dd").value = zxj;
+    var pp = DecodeJzByspace(st, zxj, zxj.length);
+    var msg = "";
+    for (var i = 0; i < pp.length / 2; i++) {
+        msg += "%" + pp.substr(i * 2, 2);
+    }
+   // document.getElementById("dl").value = iSer.toString();
+    document.getElementById("d1").value = msg;
+    document.getElementById("de").value = unescape(decodeURI(msg));
+}
+function DecodeByspace() {
+    var st = new Object();
+    var mb = document.getElementById("mb").value;
+    if (mb != undefined && mb != "") {
+        st.letters = mb;
+    }
+    InitJz(st);
+    var zxj = document.getElementById("dd").value;
+    
+    var pp = DecodeJzByspace(st, zxj, zxj.length);
+    var msg = "";
+    for (var i = 0; i < pp.length / 2; i++) {
+        msg += "%" + pp.substr(i * 2, 2);
+    }
+    document.getElementById("d1").value = msg;
+    try {
+        document.getElementById("de").value = unescape(decodeURI(msg));
+    } catch (e) {
+        document.getElementById("de").value = e.message;
+    }
+
 }
